@@ -487,6 +487,10 @@ impl ControlledSelector for AgentInternal {
             if let Some(p) = self.find_pair(local, remote).await {
                 p.state
                     .store(CandidatePairState::Succeeded as u8, Ordering::SeqCst);
+                p.round_trip_time_ms.store(
+                    (Instant::now() - pending_request.timestamp).as_millis() as u64,
+                    Ordering::SeqCst,
+                );
                 log::trace!("Found valid candidate pair: {}", p);
             } else {
                 // This shouldn't happen

@@ -15,7 +15,7 @@ pub mod candidate_server_reflexive;
 
 use std::fmt;
 use std::net::{IpAddr, SocketAddr};
-use std::sync::atomic::{AtomicBool, AtomicU16, AtomicU8, Ordering};
+use std::sync::atomic::{AtomicBool, AtomicU16, AtomicU64, AtomicU8, Ordering};
 use std::sync::Arc;
 use std::time::SystemTime;
 
@@ -233,6 +233,7 @@ pub struct CandidatePair {
     pub(crate) binding_request_count: AtomicU16,
     pub(crate) state: AtomicU8, // convert it to CandidatePairState,
     pub(crate) nominated: AtomicBool,
+    pub(crate) round_trip_time_ms: AtomicU64,
 }
 
 impl Default for CandidatePair {
@@ -244,6 +245,7 @@ impl Default for CandidatePair {
             state: AtomicU8::new(CandidatePairState::Waiting as u8),
             binding_request_count: AtomicU16::new(0),
             nominated: AtomicBool::new(false),
+            round_trip_time_ms: AtomicU64::new(0),
         }
     }
 }
@@ -296,6 +298,7 @@ impl CandidatePair {
             state: AtomicU8::new(CandidatePairState::Waiting as u8),
             binding_request_count: AtomicU16::new(0),
             nominated: AtomicBool::new(false),
+            round_trip_time_ms: AtomicU64::new(0),
         }
     }
 
