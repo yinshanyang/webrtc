@@ -731,7 +731,11 @@ impl AgentInternal {
             });
         }
 
+        println!(">>> send_binding_request: {:?}", remote.address());
+        let start = Instant::now();
         self.send_stun(m, local, remote).await;
+        let end = Instant::now();
+        println!(">>> send_binding_request: {:?} {:?}", start, end);
     }
 
     pub(crate) async fn send_binding_success(
@@ -814,6 +818,15 @@ impl AgentInternal {
         let mut pending_binding_requests = self.pending_binding_requests.lock().await;
         for i in 0..pending_binding_requests.len() {
             if pending_binding_requests[i].transaction_id == id {
+                let start = pending_binding_requests[i].timestamp;
+                let end = Instant::now();
+                let duration = end - start;
+                println!(">>> handle_inbound_binding_success: {:?}", id);
+                println!(">>> handle_inbound_binding_success: {:?} {:?}", start, end);
+                println!(
+                    ">>> handle_inbound_binding_success: {:?}",
+                    duration.as_secs_f64()
+                );
                 let valid_binding_request = pending_binding_requests.remove(i);
                 return Some(valid_binding_request);
             }
